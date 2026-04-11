@@ -1,0 +1,150 @@
+/* RESET */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* VARIABLES */
+:root {
+  --white:   #ffffff;
+  --off:     #f7f7fb;
+  --purple:  #6c3fff;
+  --blue:    #1a6bff;
+  --ink:     #0d0d1a;
+  --muted:   #6b6b8d;
+  --border:  #e4e4f0;
+}
+
+/* BODY */
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--ink);
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 68px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 48px;
+  background: rgba(255,255,255,0.9);
+  border-bottom: 1px solid var(--border);
+}
+
+.btn-signin {
+  border: 1px solid var(--purple);
+  padding: 8px 18px;
+  border-radius: 8px;
+  color: var(--purple);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.btn-signin:hover {
+  background: var(--purple);
+  color: white;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  padding: 120px 20px;
+  text-align: center;
+}
+
+/* TEXT */
+.hero-eyebrow {
+  color: var(--purple);
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.accent {
+  color: var(--blue);
+}
+
+.hero-sub {
+  color: var(--muted);
+  max-width: 500px;
+  margin: 0 auto 40px;
+}
+
+/* STATS */
+.stats-row {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 40px auto;
+  max-width: 800px;
+}
+
+.stat-item {
+  flex: 1;
+  padding: 20px;
+}
+
+.stat-item:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.stat-num {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--purple);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* CTA */
+.btn-cta {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white;
+  padding: 14px 30px;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-flex;
+  gap: 8px;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* MOBILE */
+@media (max-width: 700px) {
+  .stats-row {
+    flex-direction: column;
+  }
+
+  .stat-item:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/*TOP IMAGE */
+.nav-logo {
+  height: 56px;      
+  width: auto;       
+  object-fit: contain;
+}

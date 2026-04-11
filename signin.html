@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SentiNet – Sign In</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="signin.css" />
+   <link rel="stylesheet" href="styles.css" />
+
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-brand">
+        <img src="logo.jpeg" alt="logo" class="nav-logo" img/>
+    </a>
+
+    <a href="index.html" class="btn-backtohome">Back To Home</a>
+  </nav>
+
+  <!-- PAGE -->
+  <div class="page">
+    <div class="card" id="card">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('signin')">Sign In</button>
+        <button class="tab" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <div class="panel" id="panel-signin">
+        <p class="panel-title">Welcome back</p>
+        <p class="panel-sub">Sign in to your SentiNet account to continue.</p>
+
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" id="si-email" placeholder="you@organization.com" />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="si-password" placeholder="••••••••" />
+          <p class="err-msg" id="si-err"></p>
+        </div>
+
+        <button class="btn-primary" onclick="handleSignIn()">
+          Sign In
+        </button>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="panel hidden" id="panel-register">
+        <p class="panel-title">Create account</p>
+        <p class="panel-sub">Set up your SentiNet profile.</p>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="reg-name" />
+          </div>
+
+          <div class="form-group">
+            <label>Organization</label>
+            <input type="text" id="reg-org" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Your Role</label>
+          <select id="reg-role">
+            <option disabled selected>Select role</option>
+            <option>IT Administrator</option>
+            <option>Network Manager</option>
+            <option>Security Officer</option>
+            <option>Office Manager</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="reg-password" />
+        </div>
+
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="reg-confirm" />
+          <p class="err-msg" id="reg-err"></p>
+        </div>
+
+        <button class="btn-primary" onclick="handleRegister()">
+          Create Account
+        </button>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="success-screen">
+        <div class="success-icon">✔</div>
+        <p class="success-title">Account created!</p>
+        <p class="success-sub" id="success-msg"></p>
+
+        <button class="btn-primary" onclick="window.location.href='dashboard.html'">
+          Go to Dashboard
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="signin.js"></script>
+
+</body>
+</html>
