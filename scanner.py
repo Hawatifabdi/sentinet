@@ -5,7 +5,7 @@ def scan_network(network_range):
     print(f"[+] Scanning network: {network_range}")
 
     try:
-        nm.scan(hosts=network_range, arguments="-sT -sV --open -T4")
+        nm.scan(hosts=network_range, arguments="-sS -sV -O --open")
     except Exception as e:
         print(f"[!] Scan Failed: {e}")
         return []

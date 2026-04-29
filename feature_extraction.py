@@ -1,3 +1,36 @@
+
+FEATURE_ORDER = [
+    "has_port_80",
+    "has_port_443",
+    "has_port_554",
+    "has_port_9100",
+    "has_port_631",
+    "has_port_515",
+    "has_port_23",
+    "has_port_21",
+    "has_port_22",
+    "has_port_1900",
+    "has_port_3389",
+    "has_port_445",
+    "has_rtsp_service",
+    "has_ipp_service",
+    "has_raw_service",
+    "has_upnp_service",
+    "has_http_service",
+    "has_ftp_service",
+    "total_open_ports",
+    "risky_port_count",
+    "camera_port_hits",
+    "printer_port_hits",
+    "is_camera_vendor",
+    "is_printer_vendor",
+    "is_wap_vendor",
+    "has_linux_os",
+    "has_windows_os",
+    "has_macos_os",
+    "has_non_iot_ports",
+]
+
 #main vendors info
 CAMERA_VENDORS  = ["hikvision", "dahua", "axis", "hanwha", "uniview", "reolink", "amcrest"]
 PRINTER_VENDORS = ["hp", "canon", "epson", "brother", "xerox", "ricoh", "lexmark"]
@@ -74,13 +107,7 @@ def extract_features_batch(devices: list) -> list:
     return [extract_features(d) for d in devices]
 
 def features_to_vector(feature_dict: dict) -> list:
-    EXCLUDE = {"ip"}
-    return [v for k, v in feature_dict.items() if k not in EXCLUDE]
-
+    return [feature_dict.get(f, 0) for f in FEATURE_ORDER]
 
 def get_feature_names() -> list:
-    dummy = extract_features({
-        "ip": "0.0.0.0", "mac": None, "vendor": None,
-        "os": None, "ports": []
-    })
-    return [k for k in dummy.keys() if k != "ip"]
+    return FEATURE_ORDER.copy()
