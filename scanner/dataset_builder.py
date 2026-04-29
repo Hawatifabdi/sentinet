@@ -1,7 +1,7 @@
 
 #  Generates labelled training data from scan results
 
-from feature_extraction import extract_features, features_to_vector
+from database.scanner.feature_extraction import extract_features, features_to_vector
 import csv
 
 
@@ -83,7 +83,7 @@ def build_dataset(devices: list) -> tuple:
 
 
 def save_dataset_csv(devices: list, filepath: str = "dataset.csv"):
-    from feature_extraction import get_feature_names
+    from database.scanner.feature_extraction import get_feature_names
 
     feature_names = get_feature_names()
     rows          = []

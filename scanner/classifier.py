@@ -15,12 +15,12 @@ from sklearn.preprocessing   import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics         import classification_report, accuracy_score
 
-from feature_extraction import (
+from scanner.feature_extraction import (
     extract_features,
     features_to_vector,
     FEATURE_ORDER,          # fixed order — ensures train/predict consistency
 )
-from dataset_builder import build_dataset, generate_synthetic_data
+from scanner.dataset_builder import build_dataset, generate_synthetic_data
 
 # ────────────────────────────────────────
 #  PATHS

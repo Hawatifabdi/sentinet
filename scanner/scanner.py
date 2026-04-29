@@ -5,7 +5,7 @@ def scan_network(network_range):
     print(f"[+] Scanning network: {network_range}")
 
     try:
-        nm.scan(hosts=network_range, arguments="-sS -sV -O --open")
+        nm.scan(hosts=network_range, arguments="-Pn -sT -sV --open -T4")
     except Exception as e:
         print(f"[!] Scan Failed: {e}")
         return []
@@ -53,7 +53,7 @@ def scan_network(network_range):
 
     print(f"[+] Found {len(devices)} devices")
     return devices
-results = scan_network("192.168.1.0/24")
-
-for d in results:
-    print(d)
+if __name__ == "__main__":
+    results = scan_network("172.20.0.0/24")
+    for d in results:
+        print(d)
