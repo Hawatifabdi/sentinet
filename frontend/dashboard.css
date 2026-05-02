@@ -306,6 +306,26 @@ body {
   stroke-width: 2.2; stroke-linecap: round;
 }
 
+.nvd-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  background: var(--white);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nvd-toggle input {
+  accent-color: var(--purple);
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── SCANNING PROGRESS ── */
@@ -460,6 +480,16 @@ body {
 
 .device-grid.visible { opacity: 1; }
 
+.filter-empty {
+  background: var(--white);
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  padding: 22px;
+  text-align: center;
+}
+
 /* ── DEVICE CARD ── */
 .device-card {
   background: var(--white);
@@ -593,7 +623,7 @@ body {
 }
 
 .device-card.open .dc-body {
-  max-height: 600px;
+  max-height: 760px;
   border-top: 1px solid var(--border);
 }
 
@@ -678,6 +708,64 @@ body {
 
 .port-tag.safe   { background: var(--low-bg);  color: var(--low);  }
 .port-tag.unsafe { background: var(--high-bg); color: var(--high); }
+
+.cve-block {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.mini-label {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.cve-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cve-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.cve-id {
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.cve-score {
+  border-radius: 99px;
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+}
+
+.cve-score.high { background: var(--high-bg); color: var(--high); }
+.cve-score.med  { background: var(--med-bg);  color: var(--med);  }
+.cve-score.low  { background: var(--low-bg);  color: var(--low);  }
+
+.cve-empty,
+.simple-text {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.simple-text + .simple-text {
+  margin-top: 8px;
+}
 
 /* vulnerability list */
 .vuln-item {

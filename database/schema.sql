@@ -7,6 +7,9 @@ USE sentinet;
 CREATE TABLE scan_history (
     scan_id       INT AUTO_INCREMENT PRIMARY KEY,
     network_range VARCHAR(50)  NOT NULL,
+    organization  VARCHAR(200) DEFAULT 'Default Organization',
+    user_email    VARCHAR(255),
+    firebase_uid  VARCHAR(128),
     scanned_at    DATETIME     DEFAULT NOW(),
     total_devices INT          DEFAULT 0,
     iot_devices   INT          DEFAULT 0,

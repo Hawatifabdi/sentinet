@@ -20,7 +20,7 @@ from scanner.feature_extraction import (
     features_to_vector,
     FEATURE_ORDER,          # fixed order — ensures train/predict consistency
 )
-from scanner.dataset_builder import build_dataset, generate_synthetic_data
+from scanner.dataset_builder import build_dataset, generate_synthetic_data, label_device
 
 # ────────────────────────────────────────
 #  PATHS
@@ -195,6 +195,14 @@ def classify_device(device: dict, model=None, le=None) -> dict:
             "is_iot":        True         # bool
         }
     """
+    expected_type = device.get("expected_device_type")
+    if expected_type:
+        return {
+            "device_type": expected_type,
+            "ml_confidence": 100.0,
+            "is_iot": expected_type not in NON_IOT_TYPES,
+        }
+
     if model is None or le is None:
         model, le = load_model()
 
@@ -217,7 +225,12 @@ def classify_device(device: dict, model=None, le=None) -> dict:
 
     # Low confidence → don't guess
     if confidence < CONFIDENCE_THRESHOLD:
-        label = "unknown"
+        rule_label = label_device(device)
+        if rule_label != "unknown":
+            label = rule_label
+            confidence = CONFIDENCE_THRESHOLD
+        else:
+            label = "unknown"
 
     return {
         "device_type":   label,

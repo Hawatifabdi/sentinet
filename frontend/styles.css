@@ -273,6 +273,15 @@ input, select {
   cursor: pointer;
 }
 
+.btn-primary:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.btn-primary.is-loading {
+  position: relative;
+}
+
 /* ERROR */
 .err-msg {
   color: var(--error);

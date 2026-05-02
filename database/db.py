@@ -1,5 +1,6 @@
 
 import mysql.connector
+from mysql.connector import Error as MySQLError
 from datetime import datetime
 
 # XAMPP connection settings 
@@ -11,21 +12,44 @@ DB = {
 }
 
 def connect():
-    return mysql.connector.connect(**DB)
+    try:
+        return mysql.connector.connect(**DB)
+    except mysql.connector.Error as err:
+        print(f"[!] Database connection failed: {err}")
+        raise
 
 
 # ════════════════════════════════════════
 #  SCAN HISTORY
 # ════════════════════════════════════════
 
-def create_scan(network_range):
+def create_scan(network_range, organization="Default Organization", user_email=None, firebase_uid=None):
     """Call this before scanning. Returns the scan_id."""
     conn = connect()
     cur  = conn.cursor()
-    cur.execute(
-        "INSERT INTO scan_history (network_range) VALUES (%s)",
-        (network_range,)
-    )
+    try:
+        cur.execute(
+            """
+            INSERT INTO scan_history (network_range, organization, user_email, firebase_uid)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (network_range, organization, user_email, firebase_uid)
+        )
+    except MySQLError as exc:
+        if exc.errno != 1054:
+            raise
+        try:
+            cur.execute(
+                "INSERT INTO scan_history (network_range, organization) VALUES (%s, %s)",
+                (network_range, organization)
+            )
+        except MySQLError as fallback_exc:
+            if fallback_exc.errno != 1054:
+                raise
+            cur.execute(
+                "INSERT INTO scan_history (network_range) VALUES (%s)",
+                (network_range,)
+            )
     conn.commit()
     scan_id = cur.lastrowid
     conn.close()
@@ -52,6 +76,76 @@ def get_scan_history():
     rows = cur.fetchall()
     conn.close()
     return rows
+
+
+def get_latest_scan():
+    conn = connect()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT * FROM scan_history ORDER BY scanned_at DESC LIMIT 1")
+    row = cur.fetchone()
+    conn.close()
+    return row
+
+
+def get_scan_summaries(organization=None, user_email=None, firebase_uid=None):
+    try:
+        conn = connect()
+        cur = conn.cursor(dictionary=True)
+        params = ()
+        where = ""
+        if firebase_uid and organization:
+            where = "WHERE firebase_uid = %s OR (firebase_uid IS NULL AND user_email IS NULL AND organization = %s)"
+            params = (firebase_uid, organization)
+        elif user_email and organization:
+            where = "WHERE user_email = %s OR (firebase_uid IS NULL AND user_email IS NULL AND organization = %s)"
+            params = (user_email, organization)
+        elif firebase_uid:
+            where = "WHERE firebase_uid = %s"
+            params = (firebase_uid,)
+        elif user_email:
+            where = "WHERE user_email = %s"
+            params = (user_email,)
+        elif organization:
+            where = "WHERE organization = %s"
+            params = (organization,)
+        try:
+            cur.execute(f"""
+                SELECT
+                    scan_id,
+                    network_range,
+                    COALESCE(organization, 'Default Organization') AS organization,
+                    user_email,
+                    firebase_uid,
+                    scanned_at,
+                    total_devices,
+                    iot_devices,
+                    high_risk
+                FROM scan_history
+                {where}
+                ORDER BY scanned_at DESC
+                LIMIT 25
+            """, params)
+        except MySQLError as exc:
+            if exc.errno != 1054:
+                raise
+            cur.execute("""
+                SELECT
+                    scan_id,
+                    network_range,
+                    'Default Organization' AS organization,
+                    scanned_at,
+                    total_devices,
+                    iot_devices,
+                    high_risk
+                FROM scan_history
+                ORDER BY scanned_at DESC
+                LIMIT 25
+            """)
+        rows = cur.fetchall()
+        conn.close()
+        return rows
+    except MySQLError:
+        return []
 
 
 # ════════════════════════════════════════
@@ -253,25 +347,28 @@ def get_user_by_email(email):
 
 def get_dashboard_stats():
     """Returns the numbers shown at the top of the dashboard."""
-    conn = connect()
-    cur  = conn.cursor(dictionary=True)
+    try:
+        conn = connect()
+        cur  = conn.cursor(dictionary=True)
 
-    cur.execute("SELECT COUNT(*) AS total FROM devices")
-    total = cur.fetchone()["total"]
+        cur.execute("SELECT COUNT(*) AS total FROM devices")
+        total = cur.fetchone()["total"]
 
-    cur.execute("SELECT COUNT(*) AS iot FROM devices WHERE is_iot = 1")
-    iot = cur.fetchone()["iot"]
+        cur.execute("SELECT COUNT(*) AS iot FROM devices WHERE is_iot = 1")
+        iot = cur.fetchone()["iot"]
 
-    cur.execute("SELECT COUNT(*) AS high FROM devices WHERE risk_level IN ('high', 'critical')")
-    high = cur.fetchone()["high"]
+        cur.execute("SELECT COUNT(*) AS high FROM devices WHERE risk_level IN ('high', 'critical')")
+        high = cur.fetchone()["high"]
 
-    cur.execute("SELECT COUNT(*) AS scans FROM scan_history")
-    scans = cur.fetchone()["scans"]
+        cur.execute("SELECT COUNT(*) AS scans FROM scan_history")
+        scans = cur.fetchone()["scans"]
 
-    conn.close()
-    return {
-        "total_devices": total,
-        "iot_devices":   iot,
-        "high_risk":     high,
-        "total_scans":   scans
-    }
+        conn.close()
+        return {
+            "total_devices": total,
+            "iot_devices":   iot,
+            "high_risk":     high,
+            "total_scans":   scans
+        }
+    except MySQLError:
+        return {"total_devices": 0, "iot_devices": 0, "high_risk": 0, "total_scans": 0}

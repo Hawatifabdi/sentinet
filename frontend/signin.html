@@ -52,7 +52,7 @@
           <p class="err-msg" id="si-err"></p>
         </div>
 
-        <button class="btn-primary" onclick="handleSignIn()">
+        <button class="btn-primary" id="btn-signin" onclick="handleSignIn()">
           Sign In
         </button>
       </div>
@@ -101,7 +101,7 @@
           <p class="err-msg" id="reg-err"></p>
         </div>
 
-        <button class="btn-primary" onclick="handleRegister()">
+        <button class="btn-primary" id="btn-register" onclick="handleRegister()">
           Create Account
         </button>
       </div>
@@ -112,7 +112,7 @@
         <p class="success-title">Account created!</p>
         <p class="success-sub" id="success-msg"></p>
 
-        <button class="btn-primary" onclick="window.location.href='dashboard.html'">
+        <button class="btn-primary" onclick="window.location.href='/dashboard'">
           Go to Dashboard
         </button>
       </div>
@@ -121,6 +121,11 @@
   </div>
 
   <!-- JS -->
+  <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth-common.js"></script>
   <script src="signin.js"></script>
 
 </body>

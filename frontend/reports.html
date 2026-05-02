@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SentiNet – Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <link rel="stylesheet" href="reports.css"/>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-brand">
+    <img src="logo.jpeg" alt="SentiNet Logo" class="sb-logo">
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-label">Main</span>
+    <a class="sb-link" href="/dashboard">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="sb-link active" onclick="return false;">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Reports &amp; Analytics
+    </a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar">HA</div>
+      <div class="sb-user-info">
+        <div class="sb-user-name">Hawatif A.</div>
+        <div class="sb-user-role">IT Administrator</div>
+      </div>
+    </div>
+    <button class="btn-signout" onclick="sentinetSignOut()">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Reports &amp; Analytics</div>
+    <div class="topbar-right">
+      <a class="btn-scan report-download" href="/api/report.pdf">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PDF
+      </a>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="reports-grid">
+      <section class="analytics-card">
+        <div class="analytics-head">
+          <h2>Risk Distribution</h2>
+          <span id="risk-total">0 devices</span>
+        </div>
+        <div class="bar-chart" id="risk-chart"></div>
+      </section>
+
+      <section class="analytics-card">
+        <div class="analytics-head">
+          <h2>Device Mix</h2>
+          <span>Latest scan</span>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut" id="type-donut"></div>
+          <div class="legend" id="type-legend"></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="analytics-card table-card">
+      <div class="analytics-head">
+        <h2>Scan History</h2>
+        <span>Grouped by organization</span>
+      </div>
+      <div class="scan-table-wrap">
+        <table class="scan-table">
+          <thead>
+            <tr>
+              <th>Organization</th>
+              <th>Network</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>IoT</th>
+              <th>High Risk</th>
+            </tr>
+          </thead>
+          <tbody id="scan-history"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="auth-common.js"></script>
+<script src="reports.js"></script>
+</body>
+</html>
