@@ -109,7 +109,15 @@ function setReportDownloadLink() {
 
 function loadAnalytics() {
   const profile = getSavedProfile() || {};
-  if (!profile.organization || profile.organization === DEFAULT_ORGANIZATION) {
+  const currentUser = window.sentinetAuth ? window.sentinetAuth.currentUser : null;
+  const hasAccountScope = Boolean(
+    (currentUser && (currentUser.uid || currentUser.email)) ||
+    profile.uid ||
+    profile.email ||
+    (profile.organization && profile.organization !== DEFAULT_ORGANIZATION)
+  );
+
+  if (!hasAccountScope) {
     renderRiskChart({});
     renderDeviceMix({});
     renderHistory([]);

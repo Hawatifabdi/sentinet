@@ -36,14 +36,12 @@ async function startScan() {
   const network = document.getElementById('ip-input').value.trim() || '172.20.0.0/24';
   const profile = await waitForOrganization();
   const currentUser = window.sentinetAuth ? window.sentinetAuth.currentUser : null;
-  const organization = profile.organization;
+  const organization = profile.organization || DEFAULT_ORGANIZATION;
   const userEmail = (currentUser && currentUser.email) || profile.email || '';
   const firebaseUid = (currentUser && currentUser.uid) || profile.uid || '';
 
-  if (!organization || organization === DEFAULT_ORGANIZATION) {
-    progress.style.display = 'block';
-    label.textContent = 'Could not load your organization. Please sign out and sign in again.';
-    return;
+  if (organization === DEFAULT_ORGANIZATION) {
+    label.textContent = 'Organization profile unavailable. Scanning under your account...';
   }
 
   btn.disabled = true;
