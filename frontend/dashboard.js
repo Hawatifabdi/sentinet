@@ -3,12 +3,14 @@
    ───────────────────────────────────────── */
 
 let DEVICES = [];
+const CVE_EXPLANATION_CACHE = {};
 
 // ─────────────────────────────────────────
 //  STATE
 // ─────────────────────────────────────────
 let currentFilter = 'all';
 let scanDone = false;
+let latestLoaded = false;
 
 // ─────────────────────────────────────────
 //  ICON SVG MAP
@@ -19,6 +21,15 @@ const ICON_SVG = {
   wap:       '<svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>',
   'non-iot': '<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
 };
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
 // ─────────────────────────────────────────
 //  SCAN SIMULATION
@@ -121,10 +132,71 @@ function waitForOrganization(timeoutMs = 2500) {
   });
 }
 
+function dashboardScopedUrl(path) {
+  const profile = getSavedProfile() || {};
+  const currentUser = window.sentinetAuth ? window.sentinetAuth.currentUser : null;
+  const params = new URLSearchParams();
+  if (currentUser && currentUser.uid) params.set('firebaseUid', currentUser.uid);
+  if (currentUser && currentUser.email) params.set('userEmail', currentUser.email);
+  if (!params.has('userEmail') && profile.email) params.set('userEmail', profile.email);
+  if (!params.has('firebaseUid') && profile.uid) params.set('firebaseUid', profile.uid);
+  if (profile.organization) params.set('organization', profile.organization);
+  const query = params.toString();
+  return query ? `${path}?${query}` : path;
+}
+
+function loadLatestDashboard() {
+  if (latestLoaded || scanDone) return;
+  const profile = getSavedProfile() || {};
+  const currentUser = window.sentinetAuth ? window.sentinetAuth.currentUser : null;
+  const hasScope = Boolean(
+    (currentUser && (currentUser.uid || currentUser.email)) ||
+    profile.uid ||
+    profile.email ||
+    (profile.organization && profile.organization !== DEFAULT_ORGANIZATION)
+  );
+  if (!hasScope) return;
+
+  latestLoaded = true;
+
+  const empty = document.getElementById('empty-state');
+  if (empty) {
+    empty.style.display = 'flex';
+    empty.querySelector('p').innerHTML = 'Loading your latest scan results...';
+  }
+
+  fetch(dashboardScopedUrl('/api/analytics'))
+    .then(r => r.json())
+    .then(data => {
+      DEVICES = data.devices || [];
+      if (DEVICES.length) {
+        const progress = document.getElementById('scan-progress');
+        const label = document.getElementById('progress-label');
+        if (progress && label) {
+          progress.style.display = 'block';
+          label.textContent = `Loaded latest scan - ${DEVICES.length} devices found.`;
+        }
+        if (empty) empty.style.display = 'none';
+        renderResults(false);
+        return;
+      }
+      if (empty) {
+        empty.style.display = 'flex';
+        empty.querySelector('p').innerHTML = 'Enter an IP range above and click <strong>Scan Network</strong> to discover devices.';
+      }
+    })
+    .catch(() => {
+      if (empty) {
+        empty.style.display = 'flex';
+        empty.querySelector('p').innerHTML = 'Enter an IP range above and click <strong>Scan Network</strong> to discover devices.';
+      }
+    });
+}
+
 // ─────────────────────────────────────────
 //  RENDER RESULTS
 // ─────────────────────────────────────────
-function renderResults() {
+function renderResults(animate = true) {
   scanDone = true;
 
   const total     = DEVICES.length;
@@ -132,10 +204,17 @@ function renderResults() {
   const highRisk  = DEVICES.filter(d => d.risk === 'high');
   const findings  = DEVICES.reduce((sum, d) => sum + d.vulnerabilities.length, 0);
 
-  animateNum('stat-total', total);
-  animateNum('stat-iot',   iotDevs.length);
-  animateNum('stat-high',  highRisk.length);
-  animateNum('stat-findings', findings);
+  if (animate) {
+    animateNum('stat-total', total);
+    animateNum('stat-iot',   iotDevs.length);
+    animateNum('stat-high',  highRisk.length);
+    animateNum('stat-findings', findings);
+  } else {
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-iot').textContent = iotDevs.length;
+    document.getElementById('stat-high').textContent = highRisk.length;
+    document.getElementById('stat-findings').textContent = findings;
+  }
 
   document.getElementById('cnt-all').textContent     = total;
   document.getElementById('cnt-iot').textContent     = iotDevs.length;
@@ -245,11 +324,15 @@ function buildCard(d) {
   const cveFindings = d.vulnerabilities.filter(v => v.source === 'nvd' || String(v.title).startsWith('CVE-'));
   const localFindings = d.vulnerabilities.filter(v => !cveFindings.includes(v));
   const cvesHtml = cveFindings.length > 0
-    ? `<div class="cve-list">${cveFindings.slice(0, 4).map(v => `
+    ? `<div class="cve-list">${cveFindings.slice(0, 4).map((v, cveIdx) => `
       <div class="cve-row">
-        <span class="cve-id">${v.title}</span>
-        <span class="cve-score ${v.sev}">CVSS ${v.cvss}</span>
+        <div class="cve-main">
+          <span class="cve-id">${escapeHtml(v.title)}</span>
+          <button class="btn-cve-ai" type="button" data-device-id="${escapeHtml(d.id)}" data-cve-idx="${cveIdx}">Explain</button>
+        </div>
+        <span class="cve-score ${escapeHtml(v.sev)}">CVSS ${escapeHtml(v.cvss)}</span>
       </div>
+      <div class="cve-ai-box" id="cve-ai-${escapeHtml(d.id)}-${cveIdx}"></div>
     `).join('')}</div>`
     : '<div class="cve-empty">No NVD CVEs found for this device.</div>';
 
@@ -261,8 +344,8 @@ function buildCard(d) {
       <div class="dc-header-left">
         <div class="dc-icon ${d.isIot ? d.type : 'generic'}">${ICON_SVG[iconKey]}</div>
         <div class="dc-info">
-          <div class="dc-name">${d.name}</div>
-          <div class="dc-mac">MAC: ${d.mac} &nbsp;·&nbsp; ${d.ip}</div>
+          <div class="dc-name">${escapeHtml(d.name)}</div>
+          <div class="dc-mac">MAC: ${escapeHtml(d.mac)} &nbsp;·&nbsp; ${escapeHtml(d.ip)}</div>
         </div>
       </div>
       <div class="dc-header-right">
@@ -282,10 +365,10 @@ function buildCard(d) {
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             Device Info
           </div>
-          <div class="rs-row"><span class="rs-key">Manufacturer</span><span class="rs-val">${d.manufacturer}</span></div>
-          <div class="rs-row"><span class="rs-key">IP Address</span><span class="rs-val">${d.ip}</span></div>
-          <div class="rs-row"><span class="rs-key">MAC Address</span><span class="rs-val">${d.mac}</span></div>
-          <div class="rs-row"><span class="rs-key">Status</span><span class="pill ok" style="font-size:0.7rem;">${d.status}</span></div>
+          <div class="rs-row"><span class="rs-key">Manufacturer</span><span class="rs-val">${escapeHtml(d.manufacturer)}</span></div>
+          <div class="rs-row"><span class="rs-key">IP Address</span><span class="rs-val">${escapeHtml(d.ip)}</span></div>
+          <div class="rs-row"><span class="rs-key">MAC Address</span><span class="rs-val">${escapeHtml(d.mac)}</span></div>
+          <div class="rs-row"><span class="rs-key">Status</span><span class="pill ok" style="font-size:0.7rem;">${escapeHtml(d.status)}</span></div>
         </div>
 
         <div class="report-section">
@@ -294,7 +377,7 @@ function buildCard(d) {
             Security Checks
           </div>
           <div class="rs-row"><span class="rs-key">Firmware</span>${fwPill}</div>
-          <div class="rs-row"><span class="rs-key">Firmware ver.</span><span class="rs-val" style="font-size:0.72rem;">${d.firmware}</span></div>
+          <div class="rs-row"><span class="rs-key">Firmware ver.</span><span class="rs-val" style="font-size:0.72rem;">${escapeHtml(d.firmware)}</span></div>
           <div class="rs-row"><span class="rs-key">Password</span>${pwPill}</div>
           <div class="rs-row"><span class="rs-key">ML Confidence</span><span class="rs-val">${d.mlConfidence || 0}%</span></div>
         </div>
@@ -354,12 +437,69 @@ function buildSimpleExplanation(device, cveFindings, localFindings) {
   `;
 }
 
+async function explainCve(deviceId, cveIdx) {
+  const device = DEVICES.find(d => String(d.id) === String(deviceId));
+  if (!device) return;
+
+  const cveFindings = device.vulnerabilities.filter(v => v.source === 'nvd' || String(v.title).startsWith('CVE-'));
+  const finding = cveFindings[Number(cveIdx)];
+  const box = document.getElementById(`cve-ai-${deviceId}-${cveIdx}`);
+  if (!finding || !box) return;
+
+  const cacheKey = `${deviceId}:${finding.title}`;
+  if (CVE_EXPLANATION_CACHE[cacheKey]) {
+    box.innerHTML = renderCveExplanation(CVE_EXPLANATION_CACHE[cacheKey]);
+    return;
+  }
+
+  box.classList.add('visible');
+  box.innerHTML = '<div class="cve-ai-loading">Generating simple explanation...</div>';
+
+  try {
+    const response = await fetch('/api/ai/explain-cve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        cveId: finding.title,
+        description: finding.desc,
+        device: `${device.name} (${device.ip})`,
+      }),
+    });
+    const data = await response.json();
+    CVE_EXPLANATION_CACHE[cacheKey] = data;
+    box.innerHTML = renderCveExplanation(data);
+  } catch {
+    box.innerHTML = '<div class="cve-ai-loading">Could not generate an explanation right now.</div>';
+  }
+}
+
+function renderCveExplanation(data) {
+  const steps = (data.steps || []).slice(0, 4).map(step => `<li>${escapeHtml(step)}</li>`).join('');
+  const source = data.source === 'openai' ? 'OpenAI' : 'Local guidance';
+  return `
+    <div class="cve-ai-card">
+      <div class="mini-label">${source} explanation</div>
+      <p><strong>Explanation:</strong> ${escapeHtml(data.explanation || 'No explanation returned.')}</p>
+      <p><strong>Why it matters:</strong> ${escapeHtml(data.why_it_matters || data.why || 'This may increase device risk.')}</p>
+      <ol>${steps}</ol>
+    </div>
+  `;
+}
+
+document.addEventListener('click', event => {
+  const button = event.target.closest('.btn-cve-ai');
+  if (!button) return;
+  event.stopPropagation();
+  explainCve(button.dataset.deviceId, button.dataset.cveIdx);
+});
+
 window.addEventListener('DOMContentLoaded', () => {
   requireSignedInUser();
-  // Dashboard starts empty - user must click "Scan Network" to begin
-  document.getElementById('empty-state').style.display = 'block';
+  document.getElementById('empty-state').style.display = 'flex';
   document.getElementById('stats-row').style.display = 'none';
   document.getElementById('filter-bar').style.display = 'none';
+  window.addEventListener('sentinet-profile-ready', loadLatestDashboard);
+  setTimeout(loadLatestDashboard, 1200);
 });
 
 // ─────────────────────────────────────────

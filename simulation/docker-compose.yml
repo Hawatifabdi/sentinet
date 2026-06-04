@@ -97,6 +97,8 @@ services:
       FIRMWARE: V5.4.0 build 160401
       MANUFACTURER: Hikvision
       PORTS: 80:http,554:rtsp,23:telnet
+      # Demo remediation: comment the line above and uncomment this line, then restart Docker and scan again.
+      # PORTS: 443:http
 
   camera_dahua:
     <<: *device-base
@@ -188,6 +190,8 @@ services:
       FIRMWARE: 2.0.0 build 20190118
       MANUFACTURER: TP-Link
       PORTS: 80:http,443:http,1900:upnp,23:telnet
+      # Demo remediation: comment the line above and uncomment this line, then restart Docker and scan again.
+      # PORTS: 443:http
 
   wap_cisco:
     <<: *device-base

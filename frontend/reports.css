@@ -7,10 +7,10 @@
 
 .analytics-card {
   background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: 22px;
-  box-shadow: 0 2px 12px rgba(13,13,26,0.04);
+  box-shadow: 0 8px 22px rgba(17,24,39,0.04);
 }
 
 .analytics-head {
@@ -22,9 +22,9 @@
 }
 
 .analytics-head h2 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 1.12rem;
 }
 
 .analytics-head span {
@@ -57,13 +57,13 @@
 .bar-track {
   height: 11px;
   background: var(--off);
-  border-radius: 99px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
-  border-radius: 99px;
+  border-radius: 8px;
   min-width: 4px;
 }
 
@@ -117,7 +117,7 @@
   align-items: center;
   background: var(--off);
   border: 1px dashed var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   color: var(--muted);
   display: flex;
   font-size: 0.84rem;

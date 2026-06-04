@@ -8,17 +8,17 @@
 /* VARIABLES */
 :root {
   --white:   #ffffff;
-  --off:     #f7f7fb;
+  --off:     #f6f5ff;
   --purple:  #6c3fff;
   --blue:    #1a6bff;
-  --ink:     #0d0d1a;
+  --ink:     #111827;
   --muted:   #6b6b8d;
-  --border:  #e4e4f0;
+  --border:  #e3e1f4;
 }
 
 /* BODY */
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
   background: var(--white);
   color: var(--ink);
 }
@@ -33,7 +33,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 0 48px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.92);
   border-bottom: 1px solid var(--border);
 }
 
@@ -66,7 +66,7 @@ nav {
 }
 
 .hero-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
   font-size: 3rem;
   margin-bottom: 16px;
 }
@@ -85,7 +85,7 @@ nav {
 .stats-row {
   display: flex;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   margin: 40px auto;
   max-width: 800px;
@@ -113,10 +113,10 @@ nav {
 
 /* CTA */
 .btn-cta {
-  background: linear-gradient(135deg, var(--purple), var(--blue));
+  background: var(--purple);
   color: white;
   padding: 14px 30px;
-  border-radius: 10px;
+  border-radius: 8px;
   text-decoration: none;
   display: inline-flex;
   gap: 8px;
@@ -160,17 +160,17 @@ footer {
 
 :root {
   --white:#fff;
-  --off:#f7f7fb;
+  --off:#f6f5ff;
   --purple:#6c3fff;
   --blue:#1a6bff;
-  --ink:#0d0d1a;
+  --ink:#111827;
   --muted:#6b6b8d;
-  --border:#e4e4f0;
+  --border:#e3e1f4;
   --error:#ef4444;
 }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
   background: var(--off);
   min-height: 100vh;
 }
@@ -185,7 +185,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 0 48px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.92);
   border-bottom: 1px solid var(--border);
 }
 
@@ -201,11 +201,11 @@ nav {
 .card {
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 8px;
   width: 100%;
   max-width: 560px; 
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
+  box-shadow: 0 18px 42px rgba(17,24,39,0.08); 
 }
 
 /* TABS */
@@ -232,10 +232,10 @@ nav {
 }
 
 .panel-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
   font-size: 1.9rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin-bottom: 8px;
   color: var(--ink);
 }
@@ -266,10 +266,10 @@ input, select {
 .btn-primary {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg,var(--purple),var(--blue));
+  background: var(--purple);
   color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
 }
 

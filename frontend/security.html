@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SentiNet - Security Module</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <link rel="stylesheet" href="reports.css"/>
+  <link rel="stylesheet" href="security.css"/>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-brand">
+    <img src="logo.jpeg" alt="SentiNet Logo" class="sb-logo">
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-label">Main</span>
+    <a class="sb-link" href="/dashboard">
+      Dashboard
+    </a>
+    <a class="sb-link" href="/reports">
+      Reports &amp; Analytics
+    </a>
+    <span class="sb-label">Security</span>
+    <a class="sb-link security-nav" href="/recommendations" data-module="recommendations">
+      Recommendations
+    </a>
+    <a class="sb-link security-nav" href="/sentinet-ai" data-module="sentinet-ai">
+      SentiNet AI
+    </a>
+    <a class="sb-link security-nav" href="/incidents" data-module="incidents">
+      Incidents
+    </a>
+    <a class="sb-link security-nav" href="/awareness" data-module="awareness">
+      Awareness
+    </a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar">HA</div>
+      <div class="sb-user-info">
+        <div class="sb-user-name">Hawatif A.</div>
+        <div class="sb-user-role">IT Administrator</div>
+      </div>
+    </div>
+    <button class="btn-signout" onclick="sentinetSignOut()">
+      Sign Out
+    </button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="security-title">Security Module</div>
+    <div class="topbar-right"></div>
+  </div>
+
+  <div class="content security-content">
+    <section class="module-strip" id="module-strip">
+      <a class="module-pill" href="/dashboard">Scanning Module</a>
+      <a class="module-pill" href="/reports">Reporting Module</a>
+      <a class="module-pill active" href="/recommendations">Remediation Module</a>
+    </section>
+
+    <div class="security-section" data-section="recommendations">
+      <section class="analytics-card wide-card">
+        <div class="analytics-head">
+          <h2>Security Recommendations Center</h2>
+          <span id="recommendation-count">0 actions</span>
+        </div>
+        <div class="recommendation-table-wrap">
+          <table class="scan-table recommendation-table">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>Issue</th>
+                <th>Fix</th>
+                <th>Why It Matters</th>
+              </tr>
+            </thead>
+            <tbody id="recommendation-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <div class="security-section" data-section="sentinet-ai">
+      <section class="analytics-card ai-card">
+        <div class="analytics-head">
+          <h2>SentiNet AI</h2>
+          <span id="ai-source">Assistant</span>
+        </div>
+        <div class="quick-questions">
+          <button data-question="Which device is most vulnerable?">Most vulnerable device</button>
+          <button data-question="How can I secure my network?">Secure my network</button>
+          <button data-question="Explain the most serious CVE in this scan.">Explain serious CVE</button>
+        </div>
+        <div class="ai-chat" id="ai-chat">
+          <div class="ai-message answer">Ask about the latest scan and SentiNet AI will answer in simple language.</div>
+        </div>
+        <form class="ai-form" id="ai-form">
+          <input id="ai-question" type="text" placeholder="Ask SentiNet AI..." autocomplete="off"/>
+          <button type="submit">Ask</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="security-section" data-section="incidents">
+      <section class="analytics-card">
+        <div class="analytics-head">
+          <h2>Security Incident Center</h2>
+          <span id="incident-count">0 incidents</span>
+        </div>
+        <div class="incident-list" id="incident-list"></div>
+      </section>
+    </div>
+
+    <div class="security-section" data-section="awareness">
+      <section class="analytics-card">
+        <div class="analytics-head">
+          <h2>User Awareness Center</h2>
+          <span id="awareness-count">Training library</span>
+        </div>
+        <div class="awareness-hero">
+          <div>
+            <strong>Security habits for everyday users</strong>
+            <p>Short lessons your audience can understand, remember, and apply while using office IoT devices.</p>
+          </div>
+          <span>IoT Security Training</span>
+        </div>
+        <div class="awareness-list" id="awareness-list"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="auth-common.js"></script>
+<script src="security.js"></script>
+</body>
+</html>
