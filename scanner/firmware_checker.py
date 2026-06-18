@@ -2,7 +2,7 @@ from scanner.simulation_profiles import get_simulation_profile
 
 
 OUTDATED_SIMULATION_FIRMWARE = {
-    "172.20.0.101": "Old Hikvision firmware used in the lab image",
+    #"172.20.0.101": "Old Hikvision firmware used in the lab image",
     "172.20.0.104": "Old Reolink firmware used in the lab image",
     "172.20.0.121": "Old TP-Link firmware build from 2019",
     "172.20.0.122": "Old Cisco WAP371 firmware branch",

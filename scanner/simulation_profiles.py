@@ -3,7 +3,7 @@ SIMULATION_PROFILES = {
         "hostname": "hikvision-cam-01",
         "vendor": "Hikvision",
         "model": "Hikvision DS-2CD2143",
-        "firmware": "V5.4.0 build 160401",
+        "firmware": "V5.7.0 build 160401",
         "device_type": "camera",
         "default_credentials": ("admin", "admin"),
     },
